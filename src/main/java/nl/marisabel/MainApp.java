@@ -17,3 +17,6 @@ public class MainApp {
   });
  }
 }
+
+//TODO only read PNG & JPG : IllegalArgumentException -> then skip file
+//Exception in thread "AWT-EventQueue-0" java.lang.IllegalArgumentException: Unknown Extension: IMG_0010.MOV

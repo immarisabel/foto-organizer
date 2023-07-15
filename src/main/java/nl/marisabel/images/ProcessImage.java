@@ -24,6 +24,15 @@ public class ProcessImage {
  private static final Logger log = Logger.getLogger(ProcessImage.class.getName());
 
  public void processImage(File imageFile, String toFolder) throws IOException, ImageReadException {
+
+ // Skip file if not image
+  String fileName = imageFile.getName().toLowerCase();
+  if (!fileName.endsWith(".jpg") && !fileName.endsWith(".jpeg") && !fileName.endsWith(".png")) {
+   log.info("Skipped file: " + fileName + " - Only PNG and JPG files are supported.");
+   return;
+  }
+
+
   ImageMetadata metadata = Imaging.getMetadata(imageFile);
 
   if (metadata instanceof JpegImageMetadata) {
