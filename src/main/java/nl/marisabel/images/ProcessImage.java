@@ -13,78 +13,97 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
 import java.util.logging.Logger;
 
 public class ProcessImage {
- private static final Pattern DATE_PATTERN = Pattern.compile("yyyy:MM:dd HH:mm:ss");
+    private static final Pattern DATE_PATTERN = Pattern.compile("yyyy:MM:dd HH:mm:ss");
 
- private static final Logger log = Logger.getLogger(ProcessImage.class.getName());
+    private static final Logger log = Logger.getLogger(ProcessImage.class.getName());
 
- public void processImage(File imageFile, String toFolder) throws IOException, ImageReadException {
+    /**
+     * Main business logic method to process all images from UI
+     * @param imageFile
+     * @param toFolder
+     * @throws IOException
+     * @throws ImageReadException
+     */
+    public void processImage(File imageFile, String toFolder) throws IOException, ImageReadException {
+        // Skip file if not image
+        String fileName = imageFile.getName().toLowerCase();
+        if (!fileName.endsWith(".jpg") && !fileName.endsWith(".jpeg") && !fileName.endsWith(".png")) {
+            log.info("Skipped file: " + fileName + " - Only PNG and JPG files are supported.");
+            return;
+        }
 
- // Skip file if not image
-  String fileName = imageFile.getName().toLowerCase();
-  if (!fileName.endsWith(".jpg") && !fileName.endsWith(".jpeg") && !fileName.endsWith(".png")) {
-   log.info("Skipped file: " + fileName + " - Only PNG and JPG files are supported.");
-   return;
-  }
+        ImageMetadata metadata = Imaging.getMetadata(imageFile);
 
+        if (metadata instanceof JpegImageMetadata) {
+            JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
+            TiffImageMetadata exif = jpegMetadata.getExif();
 
-  ImageMetadata metadata = Imaging.getMetadata(imageFile);
+            if (exif != null) {
+                TiffField field = exif.findField(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
+                if (field != null) {
+                    String dateTime = field.getStringValue();
 
-  if (metadata instanceof JpegImageMetadata) {
-   JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
-   TiffImageMetadata exif = jpegMetadata.getExif();
+                    // Parse the date and extract year and month
+                    String[] dateParts = dateTime.split(":");
+                    if (dateParts.length >= 3) {
+                        String year = dateParts[0];
+                        String month = dateParts[1];
 
-   if (exif != null) {
-    TiffField field = exif.findField(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
-    if (field != null) {
-     String dateTime = field.getStringValue();
+                        // Create the destination folder if it doesn't exist
+                        Path destinationFolder = Path.of(toFolder, year, month);
+                        Files.createDirectories(destinationFolder);
 
-     // Parse the date and extract year and month
-     String[] dateParts = dateTime.split(":");
-     if (dateParts.length >= 3) {
-      String year = dateParts[0];
-      String month = dateParts[1];
+                        // Rename the image file with the taken date data
+                        String originalFileName = imageFile.getName();
+                        String extension = originalFileName.substring(originalFileName.lastIndexOf('.'));
+                        String newFileName = generateNewFileName(dateTime, extension);
+                        Path destinationFile = destinationFolder.resolve(newFileName);
 
-      // Create the destination folder if it doesn't exist
-      Path destinationFolder = Path.of(toFolder, year, month);
-      Files.createDirectories(destinationFolder);
-
-      // Rename the image file with the taken date data
-      String originalFileName = imageFile.getName();
-      String extension = originalFileName.substring(originalFileName.lastIndexOf('.'));
-      String newFileName = generateNewFileName(dateTime, extension);
-      Path destinationFile = destinationFolder.resolve(newFileName);
-
-      // Skip renaming if the file already exists in the destination folder
-      if (!Files.exists(destinationFile)) {
-       Files.move(imageFile.toPath(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
-      } else {
-       log.info("Skipped file: " + originalFileName + " - Already exists in the destination folder.");
-      }
-     }
+                        // Skip renaming if the file already exists in the destination folder
+                        if (!Files.exists(destinationFile)) {
+                            Files.move(imageFile.toPath(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
+                        } else {
+                            log.info("Skipped file: " + originalFileName + " - Already exists in the destination folder.");
+                        }
+                    }
+                }
+            }
+        }
     }
-   }
-  }
- }
 
- private String generateNewFileName(String dateTime, String extension) {
-  SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
-  Date date = parseDate(dateTime);
-  String formattedDate = dateFormat.format(date);
-  return formattedDate + extension;
- }
 
- private Date parseDate(String dateTime) {
-  try {
-   return new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").parse(dateTime);
-  } catch (java.text.ParseException e) {
-   log.warning("Error parsing date: " + dateTime);
-   return new Date();
-  }
- }
+
+    /**
+     * Generates the new file name according to the taken signature
+     * @param dateTime The original date and time value.
+     * @param extension The file extension.
+     * @return The formatted date for the name as a String along with the file format.
+     */
+    private String generateNewFileName(String dateTime, String extension) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        Date date = parseDate(dateTime);
+        String formattedDate = dateFormat.format(date);
+        return formattedDate + extension;
+    }
+
+    /**
+     * Parse the date for the Created and Modified date of the file.
+     * @param dateTime The original date and time value.
+     * @return The new Date object.
+     */
+    private Date parseDate(String dateTime) {
+        try {
+            return new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").parse(dateTime);
+        } catch (java.text.ParseException e) {
+            log.warning("Error parsing date: " + dateTime);
+            return new Date();
+        }
+    }
 }

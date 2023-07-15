@@ -1,7 +1,7 @@
 package nl.marisabel;
 
 
-import nl.marisabel.ui.Organize;
+import nl.marisabel.images.OrganizePhotos;
 
 public class TerminalApp {
 
@@ -13,8 +13,8 @@ public class TerminalApp {
   */
  public static void main(String[] args) {
 
-  Organize organize = new Organize();
-  organize.organizePhotos(SRC_FOLDER, DEST_FOLDER);
+  OrganizePhotos organizePhotos = new OrganizePhotos();
+  organizePhotos.organizePhotos(SRC_FOLDER, DEST_FOLDER);
 
  }
 }

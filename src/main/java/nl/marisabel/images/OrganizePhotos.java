@@ -1,4 +1,4 @@
-package nl.marisabel.ui;
+package nl.marisabel.images;
 
 import nl.marisabel.images.ProcessImage;
 import org.apache.commons.imaging.ImageReadException;
@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
-public class Organize {
+public class OrganizePhotos {
 
     private static Logger log = Logger.getLogger(ProcessImage.class.getName());
 
@@ -31,11 +31,10 @@ public class Organize {
     /**
      * Recursively processes the files from the given folder and its subfolders,
      * organizing them directly in the destination folder.
-     *
-     * @param folder            The folder to process.
-     * @param destinationFolder The destination folder to move the organized files to.
-     * @param processImage      The ProcessImage instance for organizing the images.
-     * @param fileNames         The set to track processed file names.
+     * @param folder
+     * @param destinationFolder
+     * @param processImage
+     * @param fileNames
      */
     private void processFilesInFolder(File folder, String destinationFolder, ProcessImage processImage, Set<String> fileNames) {
         File[] files = folder.listFiles();
@@ -50,6 +49,7 @@ public class Organize {
                     }
                 } else if (file.isDirectory()) {
                     // Process the subfolder recursively, organizing files directly in the destination folder
+                    log.info(file.getName());
                     processFilesInFolder(file, destinationFolder, processImage, fileNames);
                 }
             }

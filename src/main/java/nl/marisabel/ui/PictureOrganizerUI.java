@@ -1,6 +1,8 @@
 package nl.marisabel.ui;
 
 
+import nl.marisabel.images.OrganizePhotos;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -52,8 +54,8 @@ public class PictureOrganizerUI extends JFrame {
    public void actionPerformed(ActionEvent e) {
     String sourceFolder = sourceFolderField.getText();
     String destinationFolder = destinationFolderField.getText();
-    Organize organize = new Organize();
-    organize.organizePhotos(sourceFolder, destinationFolder);
+    OrganizePhotos organizePhotos = new OrganizePhotos();
+    organizePhotos.organizePhotos(sourceFolder, destinationFolder);
    }
   });
   buttonPanel.add(organizeButton);
@@ -69,4 +71,8 @@ public class PictureOrganizerUI extends JFrame {
   // Add the main panel to the frame
   add(mainPanel);
  }
+
+
+
+
 }
