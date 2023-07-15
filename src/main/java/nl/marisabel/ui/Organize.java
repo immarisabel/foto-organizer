@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 
 public class Organize {
 
- private ProcessImage processImage;
  static Logger log = Logger.getLogger(ProcessImage.class.getName());
 
  /**
@@ -20,6 +19,7 @@ public class Organize {
   * @param toFolder
   */
  public void organizePhotos(String fromFolder, String toFolder) {
+  ProcessImage processImage = new ProcessImage();
   List<String> fileNames = new ArrayList<>();
   File folder = new File(fromFolder);
   File[] files = folder.listFiles();

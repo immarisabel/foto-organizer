@@ -33,7 +33,7 @@ public class PictureOrganizerUI extends JFrame {
   destinationFolderField = new JTextField();
 
   // Create button
-  JButton organizeButton = new JButton("nl.marisabel.UI.Organize");
+  JButton organizeButton = new JButton("Organize");
   organizeButton.addActionListener(new ActionListener() {
 
 

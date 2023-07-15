@@ -13,19 +13,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-
 import java.util.regex.Pattern;
 import java.util.logging.Logger;
 
 public class ProcessImage {
- private static final Pattern DATE_PATTERN = Pattern.compile("your_date_pattern");
+ private static final Pattern DATE_PATTERN = Pattern.compile("yyyy:MM:dd HH:mm:ss");
 
- static Logger log = Logger.getLogger(ProcessImage.class.getName());
+ private static final Logger log = Logger.getLogger(ProcessImage.class.getName());
 
-
- void processImage(File imageFile, String toFolder) throws IOException, ImageReadException {
-
+ public void processImage(File imageFile, String toFolder) throws IOException, ImageReadException {
   ImageMetadata metadata = Imaging.getMetadata(imageFile);
+
   if (metadata instanceof JpegImageMetadata) {
    JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
    TiffImageMetadata exif = jpegMetadata.getExif();
@@ -40,6 +38,10 @@ public class ProcessImage {
      if (dateParts.length >= 3) {
       String year = dateParts[0];
       String month = dateParts[1];
+
+      // Modify created date to taken date
+      ModifyCreatedDate modifyCreatedDate = new ModifyCreatedDate();
+      modifyCreatedDate.modify(imageFile, dateTime);
 
       // Create the destination folder if it doesn't exist
       Path destinationFolder = Path.of(toFolder, year, month);
