@@ -9,8 +9,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 
 public class FileOrganizer {
- private static final String SRC_FOLDER = "source_folder";
- private static final String DEST_FOLDER = "destination_folder";
+ private static final String SRC_FOLDER = "C:\\Users\\phaer\\Desktop\\TEST FOTOS APP";
+ private static final String DEST_FOLDER = "C:\\Users\\phaer\\Desktop\\TEST FOTOS APP\\ORGANIZED";
  private static final Pattern DATE_PATTERN = Pattern.compile("your_date_pattern");
 
  public static void main(String[] args) {
