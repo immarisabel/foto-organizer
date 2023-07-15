@@ -11,22 +11,22 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.logging.Logger;
 
 public class FileOrganizer {
  private static final Pattern DATE_PATTERN = Pattern.compile("your_date_pattern");
- private final ReadOriginMetadata readOriginMetadata;
 
  static Logger log = Logger.getLogger(FileOrganizer.class.getName());
 
- public FileOrganizer(ReadOriginMetadata readOriginMetadata) {
-  this.readOriginMetadata = readOriginMetadata;
- }
 
 
 
  public void organizePhotos(String fromFolder, String toFolder) {
+  List<String> fileNames = new ArrayList<>();
   File folder = new File(fromFolder);
   File[] files = folder.listFiles();
   if (files != null) {
@@ -34,16 +34,17 @@ public class FileOrganizer {
     if (file.isFile()) {
      try {
       processImage(file, toFolder);
+      fileNames.add(String.valueOf(file));
      } catch (IOException | ImageReadException e) {
       e.printStackTrace();
      }
     }
    }
   }
+  log.info("TOTAL FILES PROCESSED: " + String.valueOf(fileNames.size()));
  }
 
  private static void processImage(File imageFile, String toFolder) throws IOException, ImageReadException {
-  System.out.println("Processing: " + imageFile.getName());
 
   ImageMetadata metadata = Imaging.getMetadata(imageFile);
   if (metadata instanceof JpegImageMetadata) {
@@ -54,7 +55,6 @@ public class FileOrganizer {
     TiffField field = exif.findField(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
     if (field != null) {
      String dateTime = field.getStringValue();
-     System.out.println("Taken Date: " + dateTime);
 
      // Parse the date and extract year and month
      String[] dateParts = dateTime.split(":");
@@ -73,7 +73,5 @@ public class FileOrganizer {
     }
    }
   }
-
-  System.out.println("------------------------------------");
  }
 }

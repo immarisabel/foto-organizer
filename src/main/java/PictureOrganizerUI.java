@@ -2,16 +2,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
-public class PictureOrganizerApp extends JFrame {
+public class PictureOrganizerUI extends JFrame {
  private JTextField sourceFolderField;
  private JTextField destinationFolderField;
 
- public PictureOrganizerApp() {
+ public PictureOrganizerUI() {
   setTitle("Picture Organizer");
   setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-  setSize(400, 200);
+  setSize(400, 150);
   setLocationRelativeTo(null);
 
   // Create the main panel
@@ -34,7 +33,7 @@ public class PictureOrganizerApp extends JFrame {
     String sourceFolder = sourceFolderField.getText();
     String destinationFolder = destinationFolderField.getText();
 
-    FileOrganizer fileOrganizer = new FileOrganizer(new ReadOriginMetadata());
+    FileOrganizer fileOrganizer = new FileOrganizer();
     // Run your organization method here
     fileOrganizer.organizePhotos(sourceFolder, destinationFolder);
    }
@@ -52,14 +51,4 @@ public class PictureOrganizerApp extends JFrame {
   add(mainPanel);
  }
 
- // Method to organize the pictures
-
- public static void main(String[] args) {
-  SwingUtilities.invokeLater(new Runnable() {
-   public void run() {
-    PictureOrganizerApp app = new PictureOrganizerApp();
-    app.setVisible(true);
-   }
-  });
- }
 }
