@@ -10,8 +10,9 @@ import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants;
 
 public class ReadOriginMetadata {
 
- public static void main(String[] args) {
-  String folderPath = "C:\\Users\\phaer\\Desktop\\TEST FOTOS APP"; // Replace with the actual folder path
+
+
+ public void readMetadata(String folderPath) {
 
   File folder = new File(folderPath);
   File[] files = folder.listFiles();

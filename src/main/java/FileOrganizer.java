@@ -1,63 +1,79 @@
-import java.io.IOException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.common.ImageMetadata;
+import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
+import org.apache.commons.imaging.formats.tiff.TiffField;
+import org.apache.commons.imaging.formats.tiff.TiffImageMetadata;
+import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants;
 
-import org.apache.commons.io.FileUtils;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.regex.Pattern;
+import java.util.logging.Logger;
 
 public class FileOrganizer {
- private static final String SRC_FOLDER = "C:\\Users\\phaer\\Desktop\\TEST FOTOS APP";
- private static final String DEST_FOLDER = "C:\\Users\\phaer\\Desktop\\TEST FOTOS APP\\ORGANIZED";
  private static final Pattern DATE_PATTERN = Pattern.compile("your_date_pattern");
- private static final Pattern ORIGIN_PATTERN = Pattern.compile("ORIGIN:(.*?)\n");
+ private final ReadOriginMetadata readOriginMetadata;
 
  static Logger log = Logger.getLogger(FileOrganizer.class.getName());
 
- public static void main(String[] args) {
-  try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(SRC_FOLDER))) {
-   for (Path path : directoryStream) {
-    log.info(path.toString());
-    if (Files.isRegularFile(path)) {
-     BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
-     LocalDateTime creationTime = LocalDateTime.ofInstant(attrs.creationTime().toInstant(), ZoneId.systemDefault());
-     log.info("creation time: " + creationTime);
-     String fileName = path.getFileName().toString();
-     log.info(fileName);
-     Matcher matcher = DATE_PATTERN.matcher(fileName);
-     if (matcher.find()) {
-      LocalDateTime fileTime = LocalDateTime.parse(matcher.group(), DateTimeFormatter.ofPattern("your_date_format"));
-      if (fileTime.isBefore(creationTime)) {
-       creationTime = fileTime;
-       log.info(fileTime.toString());
-      }
+ public FileOrganizer(ReadOriginMetadata readOriginMetadata) {
+  this.readOriginMetadata = readOriginMetadata;
+ }
+
+
+
+ public void organizePhotos(String fromFolder, String toFolder) {
+  File folder = new File(fromFolder);
+  File[] files = folder.listFiles();
+  if (files != null) {
+   for (File file : files) {
+    if (file.isFile()) {
+     try {
+      processImage(file, toFolder);
+     } catch (IOException | ImageReadException e) {
+      e.printStackTrace();
      }
-
-     String fileContent = FileUtils.readFileToString(path.toFile(), "UTF-8");
-     Matcher originMatcher = ORIGIN_PATTERN.matcher(fileContent);
-     String originMetadata = "";
-     log.info("Origin metadata: " + originMetadata);
-     log.info("!!! ORIGIN 1: " + originMatcher);
-     if (originMatcher.find()) {
-      originMetadata = originMatcher.group(1);
-      log.info("!!! ORIGIN 2: " + originMatcher);
-     }
-
-     FileUtils.touch(path.toFile());
-     Files.setAttribute(path, "lastModifiedTime", FileTime.fromMillis(creationTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
-
-     Path destDir = Paths.get(DEST_FOLDER, String.valueOf(creationTime.getYear()), String.valueOf(creationTime.getMonthValue()), originMetadata);
-     Files.createDirectories(destDir);
-
-     Files.move(path, destDir.resolve(path.getFileName()), StandardCopyOption.REPLACE_EXISTING);
     }
    }
-  } catch (IOException e) {
-   e.printStackTrace();
   }
+ }
+
+ private static void processImage(File imageFile, String toFolder) throws IOException, ImageReadException {
+  System.out.println("Processing: " + imageFile.getName());
+
+  ImageMetadata metadata = Imaging.getMetadata(imageFile);
+  if (metadata instanceof JpegImageMetadata) {
+   JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
+   TiffImageMetadata exif = jpegMetadata.getExif();
+
+   if (exif != null) {
+    TiffField field = exif.findField(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
+    if (field != null) {
+     String dateTime = field.getStringValue();
+     System.out.println("Taken Date: " + dateTime);
+
+     // Parse the date and extract year and month
+     String[] dateParts = dateTime.split(":");
+     if (dateParts.length >= 3) {
+      String year = dateParts[0];
+      String month = dateParts[1];
+
+      // Create the destination folder if it doesn't exist
+      Path destinationFolder = Path.of(toFolder, year, month);
+      Files.createDirectories(destinationFolder);
+
+      // Move the image file to the destination folder
+      Path destinationFile = destinationFolder.resolve(imageFile.getName());
+      Files.move(imageFile.toPath(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
+     }
+    }
+   }
+  }
+
+  System.out.println("------------------------------------");
  }
 }
