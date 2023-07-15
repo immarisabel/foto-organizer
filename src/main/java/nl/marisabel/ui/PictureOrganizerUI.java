@@ -1,8 +1,15 @@
+package nl.marisabel.ui;
+
+import nl.marisabel.Organize;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * nl.marisabel.UI CLASS
+ */
 public class PictureOrganizerUI extends JFrame {
  private JTextField sourceFolderField;
  private JTextField destinationFolderField;
@@ -26,16 +33,17 @@ public class PictureOrganizerUI extends JFrame {
   destinationFolderField = new JTextField();
 
   // Create button
-  JButton organizeButton = new JButton("Organize");
+  JButton organizeButton = new JButton("nl.marisabel.UI.Organize");
   organizeButton.addActionListener(new ActionListener() {
+
+
+
    @Override
    public void actionPerformed(ActionEvent e) {
     String sourceFolder = sourceFolderField.getText();
     String destinationFolder = destinationFolderField.getText();
-
-    FileOrganizer fileOrganizer = new FileOrganizer();
-    // Run your organization method here
-    fileOrganizer.organizePhotos(sourceFolder, destinationFolder);
+    Organize organize = new Organize();
+    organize.organizePhotos(sourceFolder, destinationFolder);
    }
   });
 

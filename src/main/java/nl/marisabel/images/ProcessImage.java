@@ -1,3 +1,5 @@
+package nl.marisabel.images;
+
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
 import org.apache.commons.imaging.common.ImageMetadata;
@@ -11,40 +13,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+
 import java.util.regex.Pattern;
 import java.util.logging.Logger;
 
-public class FileOrganizer {
+public class ProcessImage {
  private static final Pattern DATE_PATTERN = Pattern.compile("your_date_pattern");
 
- static Logger log = Logger.getLogger(FileOrganizer.class.getName());
+ static Logger log = Logger.getLogger(ProcessImage.class.getName());
 
 
-
-
- public void organizePhotos(String fromFolder, String toFolder) {
-  List<String> fileNames = new ArrayList<>();
-  File folder = new File(fromFolder);
-  File[] files = folder.listFiles();
-  if (files != null) {
-   for (File file : files) {
-    if (file.isFile()) {
-     try {
-      processImage(file, toFolder);
-      fileNames.add(String.valueOf(file));
-     } catch (IOException | ImageReadException e) {
-      e.printStackTrace();
-     }
-    }
-   }
-  }
-  log.info("TOTAL FILES PROCESSED: " + String.valueOf(fileNames.size()));
- }
-
- private static void processImage(File imageFile, String toFolder) throws IOException, ImageReadException {
+ void processImage(File imageFile, String toFolder) throws IOException, ImageReadException {
 
   ImageMetadata metadata = Imaging.getMetadata(imageFile);
   if (metadata instanceof JpegImageMetadata) {
