@@ -1,6 +1,8 @@
 package nl.marisabel;
 
 
+import nl.marisabel.ui.Organize;
+
 public class TerminalApp {
 
  private static final String SRC_FOLDER = "C:\\Users\\phaer\\Desktop\\TEST FOTOS APP";
@@ -11,7 +13,7 @@ public class TerminalApp {
   */
  public static void main(String[] args) {
 
-  nl.marisabel.Organize organize = new nl.marisabel.Organize();
+  Organize organize = new Organize();
   organize.organizePhotos(SRC_FOLDER, DEST_FOLDER);
 
  }
