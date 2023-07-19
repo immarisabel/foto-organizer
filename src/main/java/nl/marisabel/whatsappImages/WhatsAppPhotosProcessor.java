@@ -54,7 +54,7 @@ public class WhatsAppPhotosProcessor {
 
         // Check if the metadata is null or "null 00:00:00"
         if (Objects.equals(metadata, "null 00:00:00") || metadata == null) {
-            metadata = metadataExtractor.getWhatsAppMetadataDownloaded(file);
+            System.out.println("image does not match the pattern: IMG-YYYYMMDD-WAXXXX.jpg");
         }
 
         if (metadata != null) {
