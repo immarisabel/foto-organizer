@@ -14,6 +14,16 @@ Say goodbye to photo clutter, and let PixieSort work its enchantment on your pic
 - skip anything that is not pictures jpg and png
 - detect duplicates and skip them
 
-- accept 2 formats of whatsapp pictures (saved and received)
 - for whatsapp pictures, retain the file name and location as it is
 
+# How to use:
+### To adjust WhatsApp metadata
+Images for WhatsApp need to be named: IMG-YYYYMMDD-WAXXXX.jpg
+
+Only valid for direct pictures on the WhatsApp Media / Pictures folder
+
+### To organize normal pictures which are taken by camera (no matter which)
+- you can create manually a copy just to be on the safe side, in case things don't go well, but program should make copies too and not touch originals
+- give the path where the pictures are (it will include the sub-folders)
+- give the path where you want them to be saved
+- click organize
