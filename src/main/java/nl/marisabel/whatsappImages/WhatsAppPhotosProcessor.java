@@ -1,5 +1,6 @@
 package nl.marisabel.whatsappImages;
 
+import nl.marisabel.images.ModifyCreatedDate;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
 import org.apache.commons.imaging.common.ImageMetadata;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,69 +22,65 @@ import java.util.Objects;
 
 public class WhatsAppPhotosProcessor {
 
- private static WhatsAppImageMetadataExtractor metadataExtractor;
+    private static WhatsAppImageMetadataExtractor metadataExtractor;
+    private static ModifyCreatedDate modifyCreatedDate;
 
- public WhatsAppPhotosProcessor() {
-  metadataExtractor = new WhatsAppImageMetadataExtractor();
- }
-
- public void scanFiles(String folderPath) throws ParseException {
-  File folder = new File(folderPath);
-
-  if (folder.exists() && folder.isDirectory()) {
-   File[] files = folder.listFiles();
-
-   if (files != null) {
-    for (File file : files) {
-     if (file.isFile()) {
-      System.out.println(file.getName());
-      processFile(file);
-     }
+    public WhatsAppPhotosProcessor() {
+        metadataExtractor = new WhatsAppImageMetadataExtractor();
     }
-   }
-  } else {
-   System.out.println("Invalid folder path!");
-  }
- }
+
+    public void scanFiles(String folderPath) throws ParseException, IOException {
+        File folder = new File(folderPath);
+
+        if (folder.exists() && folder.isDirectory()) {
+            File[] files = folder.listFiles();
+
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isFile()) {
+                        System.out.println(file.getName());
+                        processFile(file);
+                    }
+                }
+            }
+        } else {
+            System.out.println("Invalid folder path!");
+        }
+    }
 
 
- private static void processFile(File file) throws ParseException {
-  String metadata = metadataExtractor.getWhatsAppMetadata(file);
+    private static void processFile(File file) throws ParseException, IOException {
+        String metadata = metadataExtractor.getWhatsAppMetadata(file);
 
-  // Check if the metadata is null or "null 00:00:00"
-  if (Objects.equals(metadata, "null 00:00:00") || metadata == null) {
-   metadata = metadataExtractor.getWhatsAppMetadataDownloaded(file);
-  }
+        // Check if the metadata is null or "null 00:00:00"
+        if (Objects.equals(metadata, "null 00:00:00") || metadata == null) {
+            metadata = metadataExtractor.getWhatsAppMetadataDownloaded(file);
+        }
 
-  if (metadata != null) {
-   SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-   System.out.println(">>>>>> METADATA: " + metadata);
+        if (metadata != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-   Date date = dateFormat.parse(metadata);
+            System.out.println(">>>>>> METADATA: " + metadata);
 
-   System.out.println("DATE : " + date);
+            Date date = dateFormat.parse(metadata); // Parse the metadata string to a Date object
 
-// up to here it works
+            System.out.println("DATE : " + date);
 
+            // Convert Date to milliseconds since the epoch
+            long milliseconds = date.getTime();
 
-   // Update the created and modified date in the metadata string
-   metadata = metadata.replaceAll("Created: \\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}", "Created: " + dateFormat.format(date));
-   metadata = metadata.replaceAll("Modified: \\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}", "Modified: " + dateFormat.format(date));
+            // Modify the "created date" metadata of the file
+            Path filePath = file.toPath();
+            BasicFileAttributeView attributes = Files.getFileAttributeView(filePath, BasicFileAttributeView.class);
+            BasicFileAttributes fileAttributes = attributes.readAttributes();
+            FileTime createdTime = FileTime.fromMillis(milliseconds);
 
-   // Update the file's metadata
-   Path filePath = file.toPath();
-   BasicFileAttributeView attributes = Files.getFileAttributeView(filePath, BasicFileAttributeView.class);
-   FileTime currentTime = FileTime.fromMillis(System.currentTimeMillis());
+            attributes.setTimes(createdTime, fileAttributes.lastModifiedTime(), fileAttributes.creationTime());
 
-   try {
-    Files.write(filePath, metadata.getBytes()); // Update the file content
-    attributes.setTimes(currentTime, currentTime, currentTime); // Update the file's created, modified, and access times
-   } catch (IOException e) {
-    e.printStackTrace();
-   }
-   System.out.println("updated metadata");
-  }
- }
-
-
+            System.out.println("Updated metadata");
+        }
+    }
 }
+
+
+
