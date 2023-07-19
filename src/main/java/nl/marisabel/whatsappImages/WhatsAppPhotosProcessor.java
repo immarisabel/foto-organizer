@@ -16,6 +16,7 @@ import java.nio.file.attribute.FileTime;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 public class WhatsAppPhotosProcessor {
 
@@ -47,17 +48,26 @@ public class WhatsAppPhotosProcessor {
 
  private static void processFile(File file) throws ParseException {
   String metadata = metadataExtractor.getWhatsAppMetadata(file);
-  System.out.println(">>>>>> META: " + metadata);
-  if (metadata == "null 00:00:00") {
-   System.out.println("Date not found in the filename. Skipping file processing.");
-  } else {
 
+  // Check if the metadata is null or "null 00:00:00"
+  if (Objects.equals(metadata, "null 00:00:00") || metadata == null) {
+   metadata = metadataExtractor.getWhatsAppMetadataDownloaded(file);
+  }
+
+  if (metadata != null) {
    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+   System.out.println(">>>>>> METADATA: " + metadata);
+
    Date date = dateFormat.parse(metadata);
 
+   System.out.println("DATE : " + date);
+
+// up to here it works
+
+
    // Update the created and modified date in the metadata string
-   metadata = metadata.replaceAll("Created: \\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}", "Created: " + date);
-   metadata = metadata.replaceAll("Modified: \\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}", "Modified: " + date);
+   metadata = metadata.replaceAll("Created: \\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}", "Created: " + dateFormat.format(date));
+   metadata = metadata.replaceAll("Modified: \\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}", "Modified: " + dateFormat.format(date));
 
    // Update the file's metadata
    Path filePath = file.toPath();
@@ -70,8 +80,8 @@ public class WhatsAppPhotosProcessor {
    } catch (IOException e) {
     e.printStackTrace();
    }
+   System.out.println("updated metadata");
   }
-  System.out.println("updated metadata");
  }
 
 
