@@ -12,50 +12,47 @@ import java.util.regex.Pattern;
 
 public class WhatsAppImageMetadataExtractor {
 
-    private static final Logger log = Logger.getLogger(WhatsAppImageMetadataExtractor.class.getName());
+ private static final Logger log = Logger.getLogger(WhatsAppImageMetadataExtractor.class.getName());
 
-    private static final String INPUT_DATE_FORMAT = "yyyy-MM-dd hh:mm:ss";
-    private static final String OUTPUT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    private static final String FILENAME_PATTERN = "IMG-(\\d{8})-WA\\d+\\.jpeg";
+ private static final String INPUT_DATE_FORMAT = "yyyyMMdd";
+ private static final String OUTPUT_DATE_FORMAT = "yyyy-MM-dd";
+ private static final String ORIGINAL_WA_PATTERN = "IMG-(\\d{8})-WA\\d+\\.jpg";
+ private static final String SAVED_WA_PATTERN = "WhatsApp Image (\\d{4}-\\d{2}-\\d{2}) at (\\d{1,2}\\.\\d{2}\\.\\d{2} [APM]{2}) \\(\\d+\\)";
+ private static final Pattern pattern = Pattern.compile(ORIGINAL_WA_PATTERN);
 
-    private SimpleDateFormat inputFormatter;
-    private SimpleDateFormat outputFormatter;
-    private Pattern filenamePattern;
 
-    public WhatsAppImageMetadataExtractor() {
-        inputFormatter = new SimpleDateFormat(INPUT_DATE_FORMAT);
-        outputFormatter = new SimpleDateFormat(OUTPUT_DATE_FORMAT);
-        filenamePattern = Pattern.compile(FILENAME_PATTERN);
-    }
+ private SimpleDateFormat inputFormatter;
+ private SimpleDateFormat outputFormatter;
+ private Pattern filenamePattern;
 
-    public String formatDate(String inputDate) throws ParseException {
-        Date date = inputFormatter.parse(inputDate);
-        return outputFormatter.format(date);
-    }
+ public WhatsAppImageMetadataExtractor() {
+  inputFormatter = new SimpleDateFormat(INPUT_DATE_FORMAT);
+  outputFormatter = new SimpleDateFormat(OUTPUT_DATE_FORMAT);
+  filenamePattern = Pattern.compile(ORIGINAL_WA_PATTERN);
+ }
 
-    public String getWhatsAppMetadata(File file) {
-        if (file.isFile()) {
-            String filename = file.getName();
-            log.info("Processing " + filename);
-            Matcher matcher = filenamePattern.matcher(filename);
+ private static String extractDateFromImageName(String imageName) {
+  Matcher matcher = pattern.matcher(imageName);
+  if (matcher.find()) {
+   System.out.println(matcher.group(1));
+   return matcher.group(1);
+  }
+  return null;
+ }
 
-            if (matcher.find()) {
-                String date = matcher.group(1);
+ public String formatDate(String inputDate) throws ParseException {
+  Date date = inputFormatter.parse(inputDate);
+  return outputFormatter.format(date);
+ }
 
-                String dateStr = date;
-                DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-                DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-                LocalDate newDate = LocalDate.parse(dateStr, inputFormatter);
-                String metadata = newDate + " 00:00:00";
-                return metadata;
-            } else {
-                log.warning("Pattern not found in the filename: " + filename);
-            }
-        } else {
-            log.severe("Invalid file: " + file);
-        }
-
-        return null;
-    }
+ public String getWhatsAppMetadata(File file) throws ParseException {
+  if (file.isFile()) {
+   String result = extractDateFromImageName(file.getName());
+   if (result != null) {
+    return formatDate(result) + " 00:00:00";
+   }
+  }
+  return null;
+ }
 }
