@@ -30,11 +30,7 @@ Only valid for direct pictures on the WhatsApp Media / Pictures folder
 
 # Still to do:
 
-- [ ] header rendering. Almost impossible after 2 hours with all possible ways I could think of.
-- [ ] backup not being created, only backup folder
-  - [ ] BACKUPS ARE BEING ATTEMPTED ON RUN TIME WITHOUT BUTTON... ill fix today.
 - [ ] for some reason some images are skipped but i cant find pattern as of why
-- [ ] whatsapp ones so far so good
 - [ ] warning to be added when field for folder is empty and you still press. currently says successful.
-- [ ] warning to be added when backup is created: not displaying yet as it does not create yet
 - [ ] warnings to be all displayed INSIDE UI not a popup.
+- [ ] whatsapp pictures not updatign creation time, only modified... why? Also normal pictures. I will look at the old working code for this part.
