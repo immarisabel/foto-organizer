@@ -1,6 +1,5 @@
 package nl.marisabel.images;
 
-import nl.marisabel.images.ProcessImage;
 import org.apache.commons.imaging.ImageReadException;
 
 import java.io.File;
@@ -11,38 +10,38 @@ import java.util.logging.Logger;
 
 public class OrganizePhotos {
 
-    private static Logger log = Logger.getLogger(ProcessImage.class.getName());
+    private static Logger log = Logger.getLogger(PhotosProcessor.class.getName());
 
     /**
      * Actively organize the files from the source folder and its subfolders to the destination folder in years and months subfolders,
      * skipping duplicates.
      *
-     * @param sourceFolder      The source folder to organize.
-     * @param destinationFolder The destination folder to move the organized files to.
+     * @param sourceFolderPath      The source folder to organize.
+     * @param destinationFolderPath The destination folder to move the organized files to.
      */
-    public void organizePhotos(String sourceFolder, String destinationFolder) {
-        ProcessImage processImage = new ProcessImage();
+    public void organizePhotos(String sourceFolderPath, String destinationFolderPath) {
+        PhotosProcessor photosProcessor = new PhotosProcessor();
         Set<String> fileNames = new HashSet<>();
-        File folder = new File(sourceFolder);
-        processFilesInFolder(folder, destinationFolder, processImage, fileNames);
+        File folder = new File(sourceFolderPath);
+        processFilesInFolder(folder, destinationFolderPath, photosProcessor, fileNames);
         log.info("TOTAL FILES PROCESSED: " + fileNames.size());
     }
 
     /**
      * Recursively processes the files from the given folder and its subfolders,
      * organizing them directly in the destination folder.
-     * @param folder
-     * @param destinationFolder
-     * @param processImage
+     * @param picture
+     * @param destinationFolderPath
+     * @param photosProcessor
      * @param fileNames
      */
-    private void processFilesInFolder(File folder, String destinationFolder, ProcessImage processImage, Set<String> fileNames) {
-        File[] files = folder.listFiles();
+    private void processFilesInFolder(File picture, String destinationFolderPath, PhotosProcessor photosProcessor, Set<String> fileNames) {
+        File[] files = picture.listFiles();
         if (files != null) {
             for (File file : files) {
                 if (file.isFile()) {
                     try {
-                        processImage.processImage(file, destinationFolder);
+                        photosProcessor.processImage(file, destinationFolderPath);
                         fileNames.add(file.getName());
                     } catch (IOException | ImageReadException e) {
                         log.warning("Error processing file: " + file.getName() + " - " + e.getMessage());
@@ -50,7 +49,7 @@ public class OrganizePhotos {
                 } else if (file.isDirectory()) {
                     // Process the subfolder recursively, organizing files directly in the destination folder
                     log.info(file.getName());
-                    processFilesInFolder(file, destinationFolder, processImage, fileNames);
+                    processFilesInFolder(file, destinationFolderPath, photosProcessor, fileNames);
                 }
             }
         }

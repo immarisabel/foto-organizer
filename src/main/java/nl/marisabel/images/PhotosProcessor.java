@@ -13,25 +13,24 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
 import java.util.logging.Logger;
 
-public class ProcessImage {
+public class PhotosProcessor {
     private static final Pattern DATE_PATTERN = Pattern.compile("yyyy:MM:dd HH:mm:ss");
 
-    private static final Logger log = Logger.getLogger(ProcessImage.class.getName());
+    private static final Logger log = Logger.getLogger(PhotosProcessor.class.getName());
 
     /**
      * Main business logic method to process all images from UI
-     * @param imageFile
-     * @param toFolder
+     * @param imageFile the image .jpg & .png to process
+     * @param destinationFolderPath the path of the folder you wish to save to
      * @throws IOException
      * @throws ImageReadException
      */
-    public void processImage(File imageFile, String toFolder) throws IOException, ImageReadException {
+    public void processImage(File imageFile, String destinationFolderPath) throws IOException, ImageReadException {
         // Skip file if not image
         String fileName = imageFile.getName().toLowerCase();
         if (!fileName.endsWith(".jpg") && !fileName.endsWith(".jpeg") && !fileName.endsWith(".png")) {
@@ -57,7 +56,7 @@ public class ProcessImage {
                         String month = dateParts[1];
 
                         // Create the destination folder if it doesn't exist
-                        Path destinationFolder = Path.of(toFolder, year, month);
+                        Path destinationFolder = Path.of(destinationFolderPath, year, month);
                         Files.createDirectories(destinationFolder);
 
                         // Rename the image file with the taken date data

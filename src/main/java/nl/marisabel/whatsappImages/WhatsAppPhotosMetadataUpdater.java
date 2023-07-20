@@ -1,12 +1,6 @@
 package nl.marisabel.whatsappImages;
 
 import nl.marisabel.images.ModifyCreatedDate;
-import org.apache.commons.imaging.ImageReadException;
-import org.apache.commons.imaging.Imaging;
-import org.apache.commons.imaging.common.ImageMetadata;
-import org.apache.commons.imaging.formats.tiff.TiffImageMetadata;
-import org.apache.commons.imaging.formats.tiff.write.TiffOutputField;
-import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,17 +14,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
-public class WhatsAppPhotosProcessor {
+public class WhatsAppPhotosMetadataUpdater {
 
     private static WhatsAppImageMetadataExtractor metadataExtractor;
     private static ModifyCreatedDate modifyCreatedDate;
 
-    public WhatsAppPhotosProcessor() {
+    public WhatsAppPhotosMetadataUpdater() {
         metadataExtractor = new WhatsAppImageMetadataExtractor();
     }
 
-    public void scanFiles(String folderPath) throws ParseException, IOException {
-        File folder = new File(folderPath);
+    public void scanFiles(String sourceFolderPath) throws ParseException, IOException {
+        File folder = new File(sourceFolderPath);
 
         if (folder.exists() && folder.isDirectory()) {
             File[] files = folder.listFiles();
