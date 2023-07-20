@@ -34,3 +34,4 @@ Only valid for direct pictures on the WhatsApp Media / Pictures folder
 - [ ] warning to be added when field for folder is empty and you still press. currently says successful.
 - [ ] warnings to be all displayed INSIDE UI not a popup.
 - [ ] pressure test... we have a lot of files to organize
+- [ ] need to add option to interupt the process after backup is made
