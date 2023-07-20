@@ -33,4 +33,4 @@ Only valid for direct pictures on the WhatsApp Media / Pictures folder
 - [ ] for some reason some images are skipped but i cant find pattern as of why
 - [ ] warning to be added when field for folder is empty and you still press. currently says successful.
 - [ ] warnings to be all displayed INSIDE UI not a popup.
-- [ ] whatsapp pictures not updatign creation time, only modified... why? Also normal pictures. I will look at the old working code for this part.
+- [ ] pressure test... we have a lot of files to organize
