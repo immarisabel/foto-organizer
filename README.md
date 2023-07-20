@@ -27,3 +27,13 @@ Only valid for direct pictures on the WhatsApp Media / Pictures folder
 - give the path where the pictures are (it will include the sub-folders)
 - give the path where you want them to be saved
 - click organize
+
+# Still to do:
+
+- [ ] header rendering. Almost impossible after 2 hours with all possible ways I could think of.
+- [ ] backup not being created, only backup folder
+- [ ] for some reason some images are skipped but i cant find pattern as of why
+- [ ] whatsapp ones so far so good
+- [ ] warning to be added when field for folder is empty and you still press. currently says successful.
+- [ ] warning to be added when backup is created: not displaying yet as it does not create yet
+- [ ] warnings to be all displayed INSIDE UI not a popup.
