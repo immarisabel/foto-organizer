@@ -2,6 +2,7 @@ package nl.marisabel;
 
 
 import nl.marisabel.backup.FolderBackup;
+import nl.marisabel.images.ModifyCreatedDate;
 import nl.marisabel.images.PhotosProcessor;
 import org.apache.commons.imaging.ImageReadException;
 
@@ -37,8 +38,11 @@ public class TerminalApp {
 //  PhotosProcessor processor = new PhotosProcessor();
 //  processor.processImage(new File(SRC_FOLDER + FILE_BEING_SKIPPED_CASE),DEST_FOLDER);
 
-  FolderBackup folderBackup = new FolderBackup();
-  folderBackup.backUpAllFiles(TEST_FOLDER);
+  ModifyCreatedDate modifyCreatedDate = new ModifyCreatedDate();
+  modifyCreatedDate.modify(new File("C:\\Users\\phaer\\Desktop\\small sample\\IMG-20190117-WA0005.jpg"), "1999-01-01 00:00:00");
+
+//  FolderBackup folderBackup = new FolderBackup();
+//  folderBackup.backUpAllFiles(TEST_FOLDER);
 
  }
 }

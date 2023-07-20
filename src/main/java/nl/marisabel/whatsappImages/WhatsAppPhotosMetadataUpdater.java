@@ -22,7 +22,10 @@ public class WhatsAppPhotosMetadataUpdater {
 
     public WhatsAppPhotosMetadataUpdater() {
         metadataExtractor = new WhatsAppImageMetadataExtractor();
+        modifyCreatedDate = new ModifyCreatedDate();
     }
+
+
 
     public void scanFiles(String sourceFolderPath) throws ParseException, IOException {
         File folder = new File(sourceFolderPath);
@@ -56,20 +59,8 @@ public class WhatsAppPhotosMetadataUpdater {
 
             System.out.println(">>>>>> METADATA: " + metadata);
 
-            Date date = dateFormat.parse(metadata); // Parse the metadata string to a Date object
-
-            System.out.println("DATE : " + date);
-
-            // Convert Date to milliseconds since the epoch
-            long milliseconds = date.getTime();
-
             // Modify the "created date" metadata of the file
-            Path filePath = file.toPath();
-            BasicFileAttributeView attributes = Files.getFileAttributeView(filePath, BasicFileAttributeView.class);
-            BasicFileAttributes fileAttributes = attributes.readAttributes();
-            FileTime createdTime = FileTime.fromMillis(milliseconds);
-
-            attributes.setTimes(createdTime, fileAttributes.lastModifiedTime(), fileAttributes.creationTime());
+            modifyCreatedDate.modify(file, metadata);
 
             System.out.println("Updated metadata");
         }

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
@@ -22,24 +23,29 @@ import java.util.logging.Logger;
 public class PhotosProcessor {
     private static final Pattern DATE_PATTERN = Pattern.compile("yyyy:MM:dd HH:mm:ss");
     private static final Logger log = Logger.getLogger(PhotosProcessor.class.getName());
+    private static ModifyCreatedDate modifyCreatedDate;
+
+    public PhotosProcessor() {
+        modifyCreatedDate = new ModifyCreatedDate();
+    }
 
     /**
      * Main business logic method to process all images from UI
      *
-     * @param imageFile             the image .jpg & .png to process
+     * @param file             the image .jpg & .png to process
      * @param destinationFolderPath the path of the folder you wish to save to
      * @throws IOException
      * @throws ImageReadException
      */
-    public void processImage(File imageFile, String destinationFolderPath) throws IOException, ImageReadException {
+    public void processImage(File file, String destinationFolderPath) throws IOException, ImageReadException, ParseException {
         // Skip file if not image
-        String fileName = imageFile.getName().toLowerCase();
+        String fileName = file.getName().toLowerCase();
         if (!fileName.endsWith(".jpg") && !fileName.endsWith(".jpeg") && !fileName.endsWith(".png")) {
             log.info("Skipped file: " + fileName + " - Only PNG and JPG files are supported.");
             return;
         }
 
-        ImageMetadata metadata = Imaging.getMetadata(imageFile);
+        ImageMetadata metadata = Imaging.getMetadata(file);
 
         if (metadata instanceof JpegImageMetadata) {
             JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
@@ -49,6 +55,8 @@ public class PhotosProcessor {
                 TiffField field = exif.findField(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
                 if (field != null) {
                     String dateTime = field.getStringValue();
+                    // Modify the "created date" metadata of the file
+                    modifyCreatedDate.modify(file, dateTime);
 
                     // Parse the date and extract year and month
                     String[] dateParts = dateTime.split(":");
@@ -61,14 +69,14 @@ public class PhotosProcessor {
                         Files.createDirectories(destinationFolder);
 
                         // Rename the image file with the taken date data
-                        String originalFileName = imageFile.getName();
+                        String originalFileName = file.getName();
                         String extension = originalFileName.substring(originalFileName.lastIndexOf('.'));
                         String newFileName = generateNewFileName(dateTime, extension);
                         Path destinationFile = destinationFolder.resolve(newFileName);
 
                         // Skip renaming if the file already exists in the destination folder
                         if (!Files.exists(destinationFile)) {
-                            Files.move(imageFile.toPath(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
+                            Files.move(file.toPath(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
                         } else {
                             log.info("Skipped file: " + originalFileName + " - Already exists in the destination folder.");
                         }

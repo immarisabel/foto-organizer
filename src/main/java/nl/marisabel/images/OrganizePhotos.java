@@ -5,6 +5,7 @@ import org.apache.commons.imaging.ImageReadException;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -47,6 +48,8 @@ public class OrganizePhotos {
                         fileNames.add(file.getName());
                     } catch (IOException | ImageReadException e) {
                         log.warning("Error processing file: " + file.getName() + " - " + e.getMessage());
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
                     }
                 } else if (file.isDirectory()) {
                     // Process the subfolder recursively, organizing files directly in the destination folder
