@@ -1,5 +1,6 @@
 package nl.marisabel.ui;
 
+import nl.marisabel.backup.FolderBackup;
 import nl.marisabel.images.OrganizePhotos;
 import nl.marisabel.whatsappImages.WhatsAppPhotosMetadataUpdater;
 
@@ -110,12 +111,33 @@ public class PictureOrganizerUI extends JFrame {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
 
-        // Create buttons with icons and tooltips
+        /////////////////////////////
+
+// Create the backup panel
+        JPanel backupPanel = new JPanel();
+        backupPanel.setBackground(Color.white);
+        JLabel backupLabel = new JLabel("Backup created");
+        backupPanel.add(backupLabel);
+
+// Run the backup process using the source folder field
+        String sourceFolderPath = sourceFolderField.getText();
+        FolderBackup folderBackup = new FolderBackup();
+        folderBackup.backUpAllFiles(sourceFolderPath);
+
+// Create a nested panel to hold the backup message and continue buttons
+        JPanel backupAndContinuePanel = new JPanel(new BorderLayout());
+        backupAndContinuePanel.setBackground(Color.white);
+        backupAndContinuePanel.add(backupPanel, BorderLayout.NORTH);
+
+
+// Create a panel to hold the continue buttons side by side
+        JPanel continueButtonsPanel = new JPanel(new GridLayout(1, 2, 5, 5));
+        continueButtonsPanel.setOpaque(false);
+
+// Create the continue button for the first process
         JButton organizeButton = new JButton("Organize Pictures");
-        organizeButton.setToolTipText("Organize pictures");
+        organizeButton.setToolTipText("Organize Pictures");
         organizeButton.setBackground(PRIMARY_COLOR);
-        int buttonRadius = 10;
-        organizeButton.setBorder(new RoundedBorder(Color.LIGHT_GRAY, radius));
         organizeButton.setBorderPainted(false);
         organizeButton.setFocusPainted(false);
         organizeButton.addActionListener(e -> {
@@ -123,23 +145,33 @@ public class PictureOrganizerUI extends JFrame {
             String destinationFolder = destinationFolderField.getText();
             boolean success = processPictures(sourceFolder, destinationFolder);
             if (success) {
-                showAlert("Pictures organized successfully!");
+                showAlert("Organize Pictures: Pictures organized successfully!");
             }
         });
 
+// Create the continue button for the second process
         JButton processWhatsAppButton = new JButton("Update WhatsApp Metadata");
-        processWhatsAppButton.setToolTipText("Update metadata for WhatsApp pictures");
+        processWhatsAppButton.setToolTipText("Update WhatsApp Metadata");
         processWhatsAppButton.setBackground(SECONDARY_COLOR);
-        processWhatsAppButton.setBorder(new RoundedBorder(Color.WHITE, buttonRadius));
         processWhatsAppButton.setBorderPainted(false);
         processWhatsAppButton.setFocusPainted(false);
         processWhatsAppButton.addActionListener(e -> {
             String whatsappSourceFolder = whatsappSourceFolderField.getText();
             boolean success = processWhatsAppPictures(whatsappSourceFolder);
             if (success) {
-                showAlert("WhatsApp metadata updated successfully!");
+                showAlert("Update WhatsApp Metadata: WhatsApp metadata updated successfully!");
             }
         });
+
+
+// Add the backup and continue panel to the main panel
+        mainPanel.add(backupAndContinuePanel, BorderLayout.CENTER);
+
+
+        ///////////////////////////
+
+
+
 
         buttonPanel.add(organizeButton);
         buttonPanel.add(processWhatsAppButton);
