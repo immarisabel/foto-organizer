@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 import java.util.logging.Logger;
 
 public class PhotosProcessor {
-    private static final Pattern DATE_PATTERN = Pattern.compile("yyyy:MM:dd HH:mm:ss");
     private static final Logger log = Logger.getLogger(PhotosProcessor.class.getName());
     private static ModifyCreatedDate modifyCreatedDate;
 
