@@ -138,6 +138,7 @@ public class PictureOrganizerUI extends JFrame {
         JButton organizeButton = new JButton("Organize Pictures");
         organizeButton.setToolTipText("Organize Pictures");
         organizeButton.setBackground(PRIMARY_COLOR);
+        organizeButton.setForeground(Color.WHITE);
         organizeButton.setBorderPainted(false);
         organizeButton.setFocusPainted(false);
         organizeButton.addActionListener(e -> {
@@ -153,6 +154,7 @@ public class PictureOrganizerUI extends JFrame {
         JButton processWhatsAppButton = new JButton("Update WhatsApp Metadata");
         processWhatsAppButton.setToolTipText("Update WhatsApp Metadata");
         processWhatsAppButton.setBackground(SECONDARY_COLOR);
+        processWhatsAppButton.setForeground(Color.WHITE);
         processWhatsAppButton.setBorderPainted(false);
         processWhatsAppButton.setFocusPainted(false);
         processWhatsAppButton.addActionListener(e -> {
