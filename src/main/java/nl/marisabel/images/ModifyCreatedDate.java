@@ -15,13 +15,14 @@ public class ModifyCreatedDate {
 
  public void modify(File file, String dateTime) {
   try {
-   SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
-   Date newCreationDate = dateFormat.parse(dateTime);
-
    Path filePath = file.toPath();
-   FileTime newCreationTime = FileTime.fromMillis(newCreationDate.getTime());
-
-   Files.setAttribute(filePath, "basic:creationTime", newCreationTime);
+   // TIME MANIPULATION FOR METADATA
+   SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+   Date metadataDateStamp = dateFormat.parse(dateTime);
+   FileTime newMetadataDate = FileTime.fromMillis(metadataDateStamp.getTime());
+   // INSERT TIME TO CREATED AND MODIFIED DATE
+   Files.setAttribute(filePath, "basic:creationTime", newMetadataDate);
+   file.setLastModified(newMetadataDate.toMillis());
 
    log.info("Modified creation time of the file: " + file.getAbsolutePath());
   } catch (ParseException | IOException e) {
