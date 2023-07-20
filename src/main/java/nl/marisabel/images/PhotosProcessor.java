@@ -1,5 +1,6 @@
 package nl.marisabel.images;
 
+import nl.marisabel.backup.FolderBackup;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
 import org.apache.commons.imaging.common.ImageMetadata;
@@ -20,12 +21,12 @@ import java.util.logging.Logger;
 
 public class PhotosProcessor {
     private static final Pattern DATE_PATTERN = Pattern.compile("yyyy:MM:dd HH:mm:ss");
-
     private static final Logger log = Logger.getLogger(PhotosProcessor.class.getName());
 
     /**
      * Main business logic method to process all images from UI
-     * @param imageFile the image .jpg & .png to process
+     *
+     * @param imageFile             the image .jpg & .png to process
      * @param destinationFolderPath the path of the folder you wish to save to
      * @throws IOException
      * @throws ImageReadException
@@ -78,10 +79,10 @@ public class PhotosProcessor {
     }
 
 
-
     /**
      * Generates the new file name according to the taken signature
-     * @param dateTime The original date and time value.
+     *
+     * @param dateTime  The original date and time value.
      * @param extension The file extension.
      * @return The formatted date for the name as a String along with the file format.
      */
@@ -94,6 +95,7 @@ public class PhotosProcessor {
 
     /**
      * Parse the date for the Created and Modified date of the file.
+     *
      * @param dateTime The original date and time value.
      * @return The new Date object.
      */

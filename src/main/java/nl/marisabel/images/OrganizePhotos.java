@@ -1,5 +1,6 @@
 package nl.marisabel.images;
 
+import nl.marisabel.backup.FolderBackup;
 import org.apache.commons.imaging.ImageReadException;
 
 import java.io.File;
@@ -30,6 +31,7 @@ public class OrganizePhotos {
     /**
      * Recursively processes the files from the given folder and its subfolders,
      * organizing them directly in the destination folder.
+     *
      * @param picture
      * @param destinationFolderPath
      * @param photosProcessor

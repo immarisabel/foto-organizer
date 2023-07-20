@@ -1,5 +1,6 @@
 package nl.marisabel.whatsappImages;
 
+import nl.marisabel.backup.FolderBackup;
 import nl.marisabel.images.ModifyCreatedDate;
 
 import java.io.File;
@@ -25,7 +26,6 @@ public class WhatsAppPhotosMetadataUpdater {
 
     public void scanFiles(String sourceFolderPath) throws ParseException, IOException {
         File folder = new File(sourceFolderPath);
-
         if (folder.exists() && folder.isDirectory()) {
             File[] files = folder.listFiles();
 
