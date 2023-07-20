@@ -20,20 +20,31 @@ public class FolderBackup {
     }
 
     public static String createBackupFolder(String sourceFolderPath) {
+
         File sourceFolder = new File(sourceFolderPath);
+
+        // Get the path where the application is running
+        String appPath = System.getProperty("user.dir");
+
+        // Create the "backups" folder under the application path
+        File backupsFolder = new File(appPath, "backups");
+
+        if (!backupsFolder.exists()) {
+            if (!backupsFolder.mkdir()) {
+                System.err.println("Failed to create the backups folder.");
+                return null;
+            }
+        }
+
         if (!sourceFolder.exists() || !sourceFolder.isDirectory()) {
             System.err.println("Source folder does not exist or is not a directory.");
             return null;
         }
 
-        // Create the backup folder name with the specified format
-        String backupFolderName = sourceFolder.getName() + " BU" + new SimpleDateFormat("yyyyMMdd").format(new Date());
+        // Create the backup folder name with the specified format and timestamp
+        String backupFolderName = sourceFolder.getName() + " BU " + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
 
-        File backupFolder = new File(sourceFolder.getParent(), backupFolderName);
-        if (backupFolder.exists()) {
-            System.err.println("Backup folder already exists. Please choose a different name or destination.");
-            return null;
-        }
+        File backupFolder = new File(backupsFolder, backupFolderName);
 
         // Create the backup folder
         if (!backupFolder.mkdir()) {
