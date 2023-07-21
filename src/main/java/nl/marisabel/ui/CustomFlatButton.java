@@ -15,9 +15,9 @@ import java.awt.*;
    setFocusPainted(false);
    setContentAreaFilled(false);
    setOpaque(true);
-   setFont(getFont().deriveFont(Font.BOLD, 14f));
+   setFont(getFont().deriveFont(Font.BOLD, 12f));
    setForeground(textColor);
-   setBorder(new RoundedBorder(bgColor, 10)); // Apply the round border
+   setBorder(new RoundedBorder(bgColor, 6)); // Apply the round border
    setBackground(bgColor);
    setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
   }
@@ -29,7 +29,7 @@ import java.awt.*;
    } else {
     g.setColor(bgColor);
    }
-   g.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10); // Fill the rounded rectangle
+   g.fillRoundRect(0, 0, getWidth(), getHeight(), 6, 6); // Fill the rounded rectangle
    super.paintComponent(g);
   }
  }
