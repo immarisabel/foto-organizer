@@ -1,72 +1,58 @@
 package nl.marisabel.ui;
 
+import nl.marisabel.ui.OnEmptyQueueListener;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
-
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
-
 /**
- * Clase que modela un ProgressBar como panel
+ * Class that models a ProgressBar as a panel.
  *
- * @author d.narvaez11
+ * Author: d.narvaez11
  */
-public class CustomProgressBar extends JPanel
-{
+public class CustomProgressBar extends JPanel {
+
     /**
-     * Thread que ejecuta los proceso de posicion y pintado de la barra de progreso
-     *
-     * @author d.narvaez11
+     * Thread that handles the progress bar positioning and painting.
      */
-    private class ThreadProgreso extends Thread
-    {
-        /**
-         * Progreso a pintar
-         */
-        private long pProgress;
+    private class ProgressThread extends Thread {
 
         /**
-         * Delay de movimiento
+         * Progress to be painted.
+         */
+        private long currentProgress;
+
+        /**
+         * Movement delay.
          */
         private long timeDelay;
 
-
-        public ThreadProgreso( long pProgreso, long timeDelay )
-        {
-            pProgress = pProgreso;
+        public ProgressThread(long currentProgress, long timeDelay) {
+            this.currentProgress = currentProgress;
             this.timeDelay = timeDelay;
         }
 
         @Override
-        public void run( )
-        {
-            setProgressBar( pProgress, timeDelay );
+        public void run() {
+            setProgressBar(currentProgress, timeDelay);
 
-            int onQueue = threadsOnQueue.size( );
-            if( onQueue > 0 )
-            {
-                // System.out.println( "onQueue Resolved: " + ( ++queueResolved ) );
-                threadsOnQueue.get( 0 ).start( );
-                threadsOnQueue.remove( 0 );
-                onQueue = threadsOnQueue.size( );
-                if( ( onEmptyQueueListener != null ) && ( onQueue == 0 ) )
-                {
-                    onEmptyQueueListener.OnEmptyQueue( );
+            int onQueue = threadsOnQueue.size();
+            if (onQueue > 0) {
+                threadsOnQueue.get(0).start();
+                threadsOnQueue.remove(0);
+                onQueue = threadsOnQueue.size();
+                if ((onEmptyQueueListener != null) && (onQueue == 0)) {
+                    onEmptyQueueListener.OnEmptyQueue();
                 }
             }
         }
 
         @Override
-        public void start( )
-        {
+        public void start() {
             threadActive = true;
-            super.start( );
+            super.start();
         }
     }
 
@@ -78,283 +64,241 @@ public class CustomProgressBar extends JPanel
     // private int queueResolved;
 
     /**
-     * Color del progreso faltante del ProgressBar
+     * Color of the complement progress of the ProgressBar.
      */
-    private Color colorComplemento;
+    private Color complementColor;
 
     /**
-     * Color del progreso del ProgressBar
+     * Color of the progress of the ProgressBar.
      */
-    private Color colorProgreso;
+    private Color progressColor;
 
     /**
-     * Imagen que se muestra cuando la barra de progreso llega a un 100%
+     * Image shown when the progress bar reaches 100%.
      */
     private ImageIcon endImage;
 
     /**
-     * Imagen de la barra de progreso
+     * Image of the progress bar.
      */
-    private ImageIcon imageBar;
+    private ImageIcon progressBarImage;
 
     /**
-     * Imagen que lidera la barra de progreso
+     * Leading image of the progress bar.
      */
-    private ImageIcon imageIcon;
+    private ImageIcon cursorImage;
 
     /**
-     * FinishOnQueueListener que es notificado cuando no hay Threads en cola
+     * FinishOnQueueListener that is notified when there are no threads in the queue.
      */
     private OnEmptyQueueListener onEmptyQueueListener;
 
     /**
-     * Progreso del ProgressBar
+     * Progress of the ProgressBar.
      */
     private double progress;
 
     /**
-     * Verifica si hay algun thread corriendo
+     * Checks if there is any running thread.
      */
     private boolean threadActive;
 
     /**
-     * Lista de threads en cola
+     * List of threads in the queue.
      */
     private ArrayList<Thread> threadsOnQueue;
 
     /**
-     * Constructor del ProgressBar. <br>
-     * Establece los colores:
+     * Constructor of the ProgressBar. <br>
+     * Sets the colors:
      * <ul>
-     * <li>colorComplemento = Color.WHITE
-     * <li>colorProgreso = Color.GRAY
+     * <li>complementColor = Color.WHITE
+     * <li>progressColor = Color.GRAY
      * </ul>
      */
-    public CustomProgressBar( )
-    {
-        threadsOnQueue = new ArrayList<>( );
-        colorComplemento = Color.WHITE;
-        colorProgreso = Color.GRAY;
+    public CustomProgressBar() {
+        threadsOnQueue = new ArrayList<>();
+        complementColor = Color.WHITE;
+        progressColor = Color.GRAY;
     }
 
     /**
-     * Establece el OnEmptyQueueListener, que es notificado cuando no hay Threads en cola
+     * Sets the OnEmptyQueueListener, which is notified when there are no threads in the queue.
      *
-     * @param finishListener OnEmptyQueueListener que será notificado
+     * @param finishListener OnEmptyQueueListener to be notified.
      */
-    public void addOnEmptyQueueListener( OnEmptyQueueListener finishListener )
-    {
+    public void addOnEmptyQueueListener(OnEmptyQueueListener finishListener) {
         onEmptyQueueListener = finishListener;
     }
 
     /**
-     * Verifica si hay Threads en cola
+     * Checks if there are threads in the queue.
      *
-     * @return Ture si hay Threads en cola, False de lo contrario
+     * @return True if there are threads in the queue, false otherwise.
      */
-    public boolean hasOnQueue( )
-    {
-        return threadsOnQueue.size( ) > 0;
+    public boolean hasOnQueue() {
+        return threadsOnQueue.size() > 0;
     }
 
     @Override
-    public void paint( Graphics g )
-    {
-        super.paint( g );
-        Graphics2D g2d = ( Graphics2D ) g;
-        int pos = ( ( int ) progress * getWidth( ) ) / 100;
+    public void paint(Graphics g) {
+        super.paint(g);
+        Graphics2D g2d = (Graphics2D) g;
+        int pos = ((int) progress * getWidth()) / 100;
 
-        if( imageBar == null )
-        {
-            g2d.setColor( colorComplemento );
-            Rectangle2D.Double back = new Rectangle2D.Double( 0, 0, getWidth( ), getHeight( ) );
-            g2d.fill( back );
+        if (progressBarImage == null) {
+            g2d.setColor(complementColor);
+            Rectangle2D.Double back = new Rectangle2D.Double(0, 0, getWidth(), getHeight());
+            g2d.fill(back);
 
-            g2d.setColor( colorProgreso );
-            Rectangle2D.Double rec = new Rectangle2D.Double( 0, 0, pos, getHeight( ) );
-            g2d.fill( rec );
+            g2d.setColor(progressColor);
+            Rectangle2D.Double rec = new Rectangle2D.Double(0, 0, pos, getHeight());
+            g2d.fill(rec);
 
-            if( imageIcon != null )
-            {
-                int x0 = pos - ( imageIcon.getIconWidth( ) / 2 );
-                int y0 = ( getHeight( ) / 2 ) - ( imageIcon.getIconHeight( ) / 2 );
+            if (cursorImage != null) {
+                int x0 = pos - (cursorImage.getIconWidth() / 2);
+                int y0 = (getHeight() / 2) - (cursorImage.getIconHeight() / 2);
 
-                if( ( pos == getWidth( ) ) && ( endImage != null ) )
-                {
-                    x0 = pos - endImage.getIconWidth( );
-                    y0 = ( getHeight( ) / 2 ) - ( endImage.getIconHeight( ) / 2 );
-                    g2d.drawImage( endImage.getImage( ), x0, y0, null );
-                }
-                else
-                {
-                    g2d.drawImage( imageIcon.getImage( ), x0, y0, null );
+                if ((pos == getWidth()) && (endImage != null)) {
+                    x0 = pos - endImage.getIconWidth();
+                    y0 = (getHeight() / 2) - (endImage.getIconHeight() / 2);
+                    g2d.drawImage(endImage.getImage(), x0, y0, null);
+                } else {
+                    g2d.drawImage(cursorImage.getImage(), x0, y0, null);
                 }
             }
-        }
-        else
-        {
-            g2d.setColor( colorProgreso );
-            Rectangle2D.Double back = new Rectangle2D.Double( 0, 0, getWidth( ), getHeight( ) );
-            g2d.fill( back );
+        } else {
+            g2d.setColor(progressColor);
+            Rectangle2D.Double back = new Rectangle2D.Double(0, 0, getWidth(), getHeight());
+            g2d.fill(back);
 
-            g2d.drawImage( imageBar.getImage( ), 0, 0, getWidth( ), getHeight( ), null );
+            g2d.drawImage(progressBarImage.getImage(), 0, 0, getWidth(), getHeight(), null);
 
-            g2d.setColor( colorComplemento );
-            Rectangle2D.Double rec = new Rectangle2D.Double( pos, 0, getWidth( ), getHeight( ) );
-            g2d.fill( rec );
+            g2d.setColor(complementColor);
+            Rectangle2D.Double rec = new Rectangle2D.Double(pos, 0, getWidth(), getHeight());
+            g2d.fill(rec);
 
-            if( imageIcon != null )
-            {
-                int x0 = pos - ( imageIcon.getIconWidth( ) / 2 );
-                int y0 = ( getHeight( ) / 2 ) - ( imageIcon.getIconHeight( ) / 2 );
+            if (cursorImage != null) {
+                int x0 = pos - (cursorImage.getIconWidth() / 2);
+                int y0 = (getHeight() / 2) - (cursorImage.getIconHeight() / 2);
 
-                if( ( pos == getWidth( ) ) && ( endImage != null ) )
-                {
-                    x0 = pos - endImage.getIconWidth( );
-                    y0 = ( getHeight( ) / 2 ) - ( endImage.getIconHeight( ) / 2 );
-                    g2d.drawImage( endImage.getImage( ), x0, y0, null );
-                }
-                else
-                {
-                    g2d.drawImage( imageIcon.getImage( ), x0, y0, null );
+                if ((pos == getWidth()) && (endImage != null)) {
+                    x0 = pos - endImage.getIconWidth();
+                    y0 = (getHeight() / 2) - (endImage.getIconHeight() / 2);
+                    g2d.drawImage(endImage.getImage(), x0, y0, null);
+                } else {
+                    g2d.drawImage(cursorImage.getImage(), x0, y0, null);
                 }
             }
         }
     }
 
     /**
-     * Establece el color de complemento con el que entra por parámetro
+     * Sets the complement color with the given color.
      *
-     * @param colorComplemento Color de complemento
+     * @param complementColor Complement color.
      */
-    public void setColorComplemento( Color colorComplemento )
-    {
-        this.colorComplemento = colorComplemento;
+    public void setComplementColor(Color complementColor) {
+        this.complementColor = complementColor;
     }
 
     /**
-     * Establece el color de progreso con el que entra por parametro
+     * Sets the progress color with the given color.
      *
-     * @param colorProgreso Color de progreso
+     * @param progressColor Progress color.
      */
-    public void setColorProgreso( Color colorProgreso )
-    {
-        this.colorProgreso = colorProgreso;
+    public void setProgressColor(Color progressColor) {
+        this.progressColor = progressColor;
     }
 
     /**
-     * Establece la imagen cursor que se mostrará cuando la barra de progreso llegue a un 100%
+     * Sets the image that will be shown when the progress bar reaches 100%.
      *
-     * @param endImage Imagen cursor que se mostrará cuando la barra de progreso llegue a un 100%
+     * @param endImage Image to be shown when the progress bar reaches 100%.
      */
-    public void setEndImage( ImageIcon endImage )
-    {
+    public void setEndImage(ImageIcon endImage) {
         this.endImage = endImage;
     }
 
     /**
-     * Establece la imagen de la barra de progreso.<br>
-     * Se establece el PreferredSize como la dimension de la imagen que entra por parámetro.<br>
-     * Sin embargo el tamaño del Panel puede variar y lo hará la barra de progreso
+     * Sets the image of the progress bar. <br>
+     * Sets the PreferredSize as the dimension of the image passed as a parameter. <br>
+     * However, the size of the Panel may vary, and so will the progress bar.
      *
-     * @param image Imagen de la barra de progreso
+     * @param image Image of the progress bar.
      */
-    public void setImageBar( ImageIcon image )
-    {
-        imageBar = image;
+    public void setProgressBarImage(ImageIcon image) {
+        progressBarImage = image;
 
-        if( imageBar != null )
-        {
-            int wBar = imageBar.getIconWidth( );
-            int hBar = imageBar.getIconHeight( );
-            setPreferredSize( new Dimension( wBar, hBar ) );
+        if (progressBarImage != null) {
+            int width = progressBarImage.getIconWidth();
+            int height = progressBarImage.getIconHeight();
+            setPreferredSize(new Dimension(width, height));
         }
     }
 
     /**
-     * Establece la imagen puntero de la barra de progreso
+     * Sets the cursor image of the progress bar.
      *
-     * @param image Imagen puntero de la barra de progreso
+     * @param image Cursor image of the progress bar.
      */
-    public void setImageCursor( ImageIcon image )
-    {
-        imageIcon = image;
+    public void setCursorImage(ImageIcon image) {
+        cursorImage = image;
     }
 
     /**
-     * Establece el progreso del ProgressBar.<br>
-     * Se pinta automaticamente el progreso ingresado.<br>
-     * Se atienden en orden de llegada, agregando el requerimiento a la cola
+     * Sets the progress of the ProgressBar. <br>
+     * The entered progress is automatically painted. <br>
+     * Requests are handled in the order they arrive, adding the requirement to the queue.
      *
-     * @param pProgress Porcentaje de la barra de progreso. pProgress <= 100
-     * @param timeDelay Delay con el que el Cursor y la barra de progreso irán avanzando
+     * @param progress Progress percentage of the progress bar. progress <= 100
+     * @param timeDelay Delay with which the cursor and the progress bar will move forward.
      */
-    public void setProgress( final long pProgress, final long timeDelay )
-    {
-        ThreadProgreso thProgreso = new ThreadProgreso( pProgress, timeDelay );
+    public void setProgress(final long progress, final long timeDelay) {
+        ProgressThread progressThread = new ProgressThread(progress, timeDelay);
 
-        if( !threadActive )
-        {
-            // System.out.println( "started" );
-            thProgreso.start( );
-        }
-        else
-        {
-            // System.out.println( "onQueue" );
-            threadsOnQueue.add( thProgreso );
+        if (!threadActive) {
+            progressThread.start();
+        } else {
+            threadsOnQueue.add(progressThread);
         }
     }
 
     /**
-     * Realiza el desplazamiento del Cursor y barra de progreso con el delay dado por parámetro
+     * Moves the Cursor and progress bar with the given delay.
      *
-     * @param pProgress Progreso que se pintará
-     * @param timeDelay Delay con el que el Cursor y la barra de progreso irán avanzando
+     * @param progress Progress to be painted.
+     * @param timeDelay Delay with which the cursor and the progress bar will move forward.
      */
-    private void setProgressBar( double pProgress, long timeDelay )
-    {
-        timeDelay = ( timeDelay == -1 ) ? 50 : timeDelay;
+    private void setProgressBar(double progress, long timeDelay) {
+        timeDelay = (timeDelay == -1) ? 50 : timeDelay;
 
-        double temp = pProgress > 100 ? 100 : pProgress;
+        double temp = progress > 100 ? 100 : progress;
 
-        if( progress != temp )
-        {
-            if( temp >= progress ) // Recorrido Positivo
-            {
-                for( double i = progress; i <= temp; i++ )
-                {
-                    progress = i;
-                    repaint( );
-                    try
-                    {
-                        Thread.sleep( timeDelay );
+        if (this.progress != temp) {
+            if (temp >= this.progress) { // Positive Progress
+                for (double i = this.progress; i <= temp; i++) {
+                    this.progress = i;
+                    repaint();
+                    try {
+                        Thread.sleep(timeDelay);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                    catch( InterruptedException e )
-                    {
-                        e.printStackTrace( );
+                }
+            } else { // Negative Progress
+                for (double i = this.progress; i >= temp; i--) {
+                    this.progress = i;
+                    repaint();
+                    try {
+                        Thread.sleep(timeDelay);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
             }
-            else // Recorrido negativo
-            {
-                for( double i = progress; i >= temp; i-- )
-                {
-                    progress = i;
-                    repaint( );
-                    try
-                    {
-                        Thread.sleep( timeDelay );
-                    }
-                    catch( InterruptedException e )
-                    {
-                        e.printStackTrace( );
-                    }
-                }
-            }
-        }
-        else if( ( temp == 0 ) && ( progress == 0 ) )
-        {
-            repaint( );
+        } else if ((temp == 0) && (this.progress == 0)) {
+            repaint();
         }
         threadActive = false;
     }
