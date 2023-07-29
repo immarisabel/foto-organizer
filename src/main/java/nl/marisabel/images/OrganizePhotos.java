@@ -1,6 +1,5 @@
 package nl.marisabel.images;
 
-import nl.marisabel.backup.FolderBackup;
 import org.apache.commons.imaging.ImageReadException;
 
 import java.io.File;
@@ -12,7 +11,6 @@ import java.util.logging.Logger;
 
 public class OrganizePhotos {
 
-    private static Logger log = Logger.getLogger(PhotosProcessor.class.getName());
 
     /**
      * Actively organize the files from the source folder and its subfolders to the destination folder in years and months subfolders,
@@ -20,13 +18,15 @@ public class OrganizePhotos {
      *
      * @param sourceFolderPath      The source folder to organize.
      * @param destinationFolderPath The destination folder to move the organized files to.
+     * @return An array of two integers, where the first element is the count of processed files and the second element is the count of skipped files.
      */
-    public void organizePhotos(String sourceFolderPath, String destinationFolderPath) {
+    public int[] organizePhotos(String sourceFolderPath, String destinationFolderPath) {
         PhotosProcessor photosProcessor = new PhotosProcessor();
         Set<String> fileNames = new HashSet<>();
-        File folder = new File(sourceFolderPath);
-        processFilesInFolder(folder, destinationFolderPath, photosProcessor, fileNames);
-        log.info("TOTAL FILES PROCESSED: " + fileNames.size());
+        int[] result = processFilesInFolder(new File(sourceFolderPath), destinationFolderPath, photosProcessor, fileNames);
+        System.out.println("[=== TOTAL FILES PROCESSED: " + result[0]);
+        System.out.println("[=== TOTAL FILES SKIPPED: " + result[1]);
+        return result;
     }
 
     /**
@@ -37,8 +37,10 @@ public class OrganizePhotos {
      * @param destinationFolderPath
      * @param photosProcessor
      * @param fileNames
+     * @return An array of two integers, where the first element is the count of processed files and the second element is the count of skipped files.
      */
-    private void processFilesInFolder(File picture, String destinationFolderPath, PhotosProcessor photosProcessor, Set<String> fileNames) {
+    private int[] processFilesInFolder(File picture, String destinationFolderPath, PhotosProcessor photosProcessor, Set<String> fileNames) {
+        int[] counters = new int[2];
         File[] files = picture.listFiles();
         if (files != null) {
             for (File file : files) {
@@ -46,17 +48,23 @@ public class OrganizePhotos {
                     try {
                         photosProcessor.processImage(file, destinationFolderPath);
                         fileNames.add(file.getName());
+                        counters[0]++; // Increment the processed files counter
                     } catch (IOException | ImageReadException e) {
-                        log.warning("Error processing file: " + file.getName() + " - " + e.getMessage());
+                        System.out.println("[!] Error processing file: " + file.getName() + " - " + e.getMessage());
+                        counters[1]++; // Increment the skipped files counter
                     } catch (ParseException e) {
-                        throw new RuntimeException(e);
+                        System.out.println("[!] Error parsing file: " + file.getName() + " - " + e.getMessage());
+                        counters[1]++; // Increment the skipped files counter
                     }
                 } else if (file.isDirectory()) {
                     // Process the subfolder recursively, organizing files directly in the destination folder
-                    log.info(file.getName());
-                    processFilesInFolder(file, destinationFolderPath, photosProcessor, fileNames);
+                    int[] subCounters = processFilesInFolder(file, destinationFolderPath, photosProcessor, fileNames);
+                    counters[0] += subCounters[0]; // Add processed files from the subfolder
+                    counters[1] += subCounters[1]; // Add skipped files from the subfolder
                 }
             }
         }
+        return counters;
     }
+
 }

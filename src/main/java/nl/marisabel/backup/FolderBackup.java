@@ -13,9 +13,9 @@ public class FolderBackup {
     public void backUpAllFiles(String sourceFolderPath) {
         String backupFolderPath = createBackupFolder(sourceFolderPath);
         if (backupFolderPath != null) {
-            System.out.println("Backup created successfully at: " + backupFolderPath);
+            System.out.println("Backup created successfully at: \n" + backupFolderPath);
         } else {
-            System.out.println("Backup creation failed.");
+            System.out.println("[!] Backup creation failed. [!]");
         }
     }
 
@@ -31,13 +31,13 @@ public class FolderBackup {
 
         if (!backupsFolder.exists()) {
             if (!backupsFolder.mkdir()) {
-                System.err.println("Failed to create the backups folder.");
+                System.err.println("[!] Failed to create the backups folder.");
                 return null;
             }
         }
 
         if (!sourceFolder.exists() || !sourceFolder.isDirectory()) {
-            System.err.println("Source folder does not exist or is not a directory.");
+            System.err.println("[!] Source folder does not exist or is not a directory.");
             return null;
         }
 
@@ -48,7 +48,7 @@ public class FolderBackup {
 
         // Create the backup folder
         if (!backupFolder.mkdir()) {
-            System.err.println("Failed to create the backup folder.");
+            System.err.println("[!] Failed to create the backup folder.");
             return null;
         }
 
