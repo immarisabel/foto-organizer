@@ -8,6 +8,7 @@ import nl.marisabel.ui.customElements.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.util.List;
 
 public class OrganizePicturesPanel {
 
@@ -15,7 +16,11 @@ public class OrganizePicturesPanel {
  private AllUtils utils;
  private Elements elements;
 
- public JPanel createOrganizePanel() {
+ public JPanel createOrganizePanel(BackupPictures backupPictures, Elements elements, AllUtils utils) {
+  this.elements = elements;
+  this.backupPictures = backupPictures;
+  this.utils = utils;
+
   JPanel organizationPanel = new JPanel();
   organizationPanel.setLayout(new BoxLayout(organizationPanel, BoxLayout.Y_AXIS));
   organizationPanel.setBorder(BorderFactory.createTitledBorder("Organize Pictures"));
@@ -54,17 +59,48 @@ public class OrganizePicturesPanel {
   organizeButton.addActionListener(e -> {
    String sourceFolder = sourceFolderField.getText();
    String destinationFolder = destinationFolderField.getText();
-   boolean backup = backupPictures.backUpAllPicturesBeforeProcessing(sourceFolder);
-   if (backup) {
-    utils.alerts.showAlert("Backup done!");
-   }
-   boolean success = processPictures(sourceFolder, destinationFolder, organizeProgressBar);
-   if (success) {
-    utils.alerts.showAlert("Organize Pictures: Pictures organized successfully!");
-   }
+
+   // Perform backup asynchronously using SwingWorker
+   SwingWorker<Void, String> worker = new SwingWorker<Void, String>() {
+    @Override
+    protected Void doInBackground() throws Exception {
+     boolean backup = backupPictures.backUpAllPicturesBeforeProcessing(sourceFolder);
+     if (backup) {
+      publish("BACKUP COMPLETED");
+     }
+     boolean success = processPictures(sourceFolder, destinationFolder, organizeProgressBar);
+     if (success) {
+      publish("Organize Pictures: Pictures organized successfully!");
+     }
+     return null;
+    }
+
+    @Override
+    protected void process(List<String> chunks) {
+     // Update the log messages live as they are published
+     for (String message : chunks) {
+      utils.logs.logsAppend(message, false);
+     }
+    }
+   };
+
+   // Execute the SwingWorker
+   worker.execute();
+
+   // Show dots during backup process
+   new Thread(() -> {
+    try {
+     while (!worker.isDone()) {
+      Thread.sleep(500); // Change the delay here to control the speed of dots appearing
+      System.out.print("  .  ");
+     }
+    } catch (InterruptedException e1) {
+     e1.printStackTrace();
+    }
+   }).start();
   });
 
-   organizationPanel.add(sourceFolderField);
+  organizationPanel.add(sourceFolderField);
   organizationPanel.add(Box.createVerticalStrut(5)); // Add some vertical spacing
   organizationPanel.add(destinationFolderField);
   organizationPanel.add(Box.createVerticalStrut(10)); // Add some vertical spacing

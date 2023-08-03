@@ -15,6 +15,10 @@ public class LogPanelUtils {
   JTextArea logTextArea = new JTextArea();
   logTextArea.setEditable(false);
 
+  // Set the font for the log text area
+  Font font = new Font("Verdana", Font.PLAIN, 12); // You can change the font and size here
+  logTextArea.setFont(font);
+
   JScrollPane scrollPane = new JScrollPane(logTextArea);
   scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 

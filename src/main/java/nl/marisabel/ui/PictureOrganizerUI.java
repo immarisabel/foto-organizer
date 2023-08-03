@@ -16,11 +16,11 @@ public class PictureOrganizerUI extends JFrame {
  private Elements elements;
 
  public PictureOrganizerUI() throws IOException {
+  elements = new Elements(); // Initialize the Elements object here
   initializeUI();
  }
 
  private void initializeUI() throws IOException {
-  elements = new Elements(); // Initialize the Elements object here
 
   setTitle("PixieSort");
   setIconImage(elements.images.PIXIE_SORT_ICON.getImage());

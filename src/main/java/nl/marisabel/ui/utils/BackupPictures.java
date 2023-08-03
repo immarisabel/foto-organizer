@@ -8,8 +8,14 @@ import java.awt.*;
 
 public class BackupPictures {
  private AllUtils utils;
+
+ public BackupPictures(AllUtils utils) {
+  this.utils = utils;
+ }
+
  public boolean backUpAllPicturesBeforeProcessing(String sourceFolder) {
   FolderBackup folderBackup = new FolderBackup();
+
   utils.logs.logsAppend("backing up " + utils.countFiles.getTotalFiles(sourceFolder) + " files....", false);
   folderBackup.backUpAllFiles(sourceFolder);
   return true;

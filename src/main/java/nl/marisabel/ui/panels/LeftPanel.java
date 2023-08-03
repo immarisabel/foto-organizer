@@ -4,6 +4,8 @@ import nl.marisabel.ui.customElements.Elements;
 import nl.marisabel.ui.panels.processPanels.OrganizePicturesPanel;
 import nl.marisabel.ui.panels.processPanels.UpdateWhatsAppMetadataPanel;
 import nl.marisabel.ui.utils.AllUtils;
+import nl.marisabel.ui.utils.BackupPictures;
+import nl.marisabel.ui.utils.CountFiles;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -25,6 +27,12 @@ public class LeftPanel {
  }
 
  public JPanel createLeftPanel() {
+  // INITIALIZING CLASSES
+  AllUtils utils = new AllUtils();
+  Elements elements = new Elements();
+  CountFiles countFiles = new CountFiles();
+  BackupPictures backupPictures = new BackupPictures(utils);
+
   JPanel mainPanel = new JPanel();
   mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
   mainPanel.setBackground(Color.white);
@@ -40,12 +48,13 @@ public class LeftPanel {
   mainPanel.add(Box.createVerticalStrut(20)); // Empty notification panel
 
   OrganizePicturesPanel organizePicturesPanel = new OrganizePicturesPanel();
-  JPanel organizePanel = organizePicturesPanel.createOrganizePanel();
+
+  JPanel organizePanel = organizePicturesPanel.createOrganizePanel(backupPictures,elements,utils);
   mainPanel.add(organizePanel);
   mainPanel.add(Box.createVerticalStrut(15)); // Vertical spacing
 
   UpdateWhatsAppMetadataPanel updateWhatsAppMetadataPanel = new UpdateWhatsAppMetadataPanel();
-  JPanel whatsappPanel = updateWhatsAppMetadataPanel.createWhatsAppPanel();
+  JPanel whatsappPanel = updateWhatsAppMetadataPanel.createWhatsAppPanel(backupPictures,elements,utils);
   mainPanel.add(whatsappPanel);
 
   JPanel footerPanel = new JPanel(); // Placeholder for the footer panel, add any extra info here if needed

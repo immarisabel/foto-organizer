@@ -1,17 +1,11 @@
 package nl.marisabel.ui.customElements;
 
 public class Elements {
-
- public Colors colors;
-
+ public Colors colors = new Colors();
  public CustomFlatButton button;
- public CustomProgressBar progressBar;
- public Images images;
+ public CustomProgressBar progressBar = new CustomProgressBar();
+ public Images images = new Images();
  public RoundedBorder border;
- public PlaceHolderTextField textField;
- public Elements() {
-  images = new Images();
-  colors = new Colors();
- }
-
+ public PlaceHolderTextField textField = new PlaceHolderTextField();
 }
+
