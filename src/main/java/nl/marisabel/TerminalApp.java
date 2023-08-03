@@ -1,9 +1,7 @@
 package nl.marisabel;
 
 
-import nl.marisabel.backup.FolderBackup;
-import nl.marisabel.images.ModifyCreatedDate;
-import nl.marisabel.images.PhotosProcessor;
+import nl.marisabel.photos.ModifyCreatedDate;
 import org.apache.commons.imaging.ImageReadException;
 
 import java.io.File;

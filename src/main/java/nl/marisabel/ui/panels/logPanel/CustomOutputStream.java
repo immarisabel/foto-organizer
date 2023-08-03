@@ -1,4 +1,4 @@
-package nl.marisabel.ui;
+package nl.marisabel.ui.panels.logPanel;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -17,4 +17,8 @@ public class CustomOutputStream extends OutputStream {
   textArea.setCaretPosition(textArea.getDocument().getLength());
  }
 }
+
+
+
+
 

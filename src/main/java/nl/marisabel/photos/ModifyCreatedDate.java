@@ -1,4 +1,4 @@
-package nl.marisabel.images;
+package nl.marisabel.photos;
 
 import java.io.File;
 import java.io.IOException;

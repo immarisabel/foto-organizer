@@ -1,4 +1,4 @@
-package nl.marisabel.images;
+package nl.marisabel.photos;
 
 import org.apache.commons.imaging.ImageReadException;
 
@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Logger;
 
 public class OrganizePhotos {
 

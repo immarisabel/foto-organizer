@@ -1,10 +1,10 @@
-package nl.marisabel.ui;
+package nl.marisabel.ui.customElements;
 
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.text.Document;
 
-class PlaceHolderTextField extends JTextField {
+public class PlaceHolderTextField extends JTextField {
  private String placeholder;
 
  public PlaceHolderTextField() {

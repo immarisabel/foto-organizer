@@ -1,6 +1,5 @@
-package nl.marisabel.images;
+package nl.marisabel.photos;
 
-import nl.marisabel.backup.FolderBackup;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
 import org.apache.commons.imaging.common.ImageMetadata;
@@ -17,7 +16,6 @@ import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.regex.Pattern;
 import java.util.logging.Logger;
 
 public class PhotosProcessor {

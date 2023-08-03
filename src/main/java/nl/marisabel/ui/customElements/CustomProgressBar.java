@@ -1,6 +1,4 @@
-package nl.marisabel.ui;
-
-import nl.marisabel.ui.OnEmptyQueueListener;
+package nl.marisabel.ui.customElements;
 
 import javax.swing.*;
 import java.awt.*;

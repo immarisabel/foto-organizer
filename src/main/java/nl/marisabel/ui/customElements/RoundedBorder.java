@@ -1,4 +1,4 @@
-package nl.marisabel.ui;
+package nl.marisabel.ui.customElements;
 
 import javax.swing.border.Border;
 import java.awt.*;

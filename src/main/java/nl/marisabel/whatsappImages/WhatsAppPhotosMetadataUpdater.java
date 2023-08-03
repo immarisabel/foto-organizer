@@ -1,18 +1,11 @@
 package nl.marisabel.whatsappImages;
 
-import nl.marisabel.backup.FolderBackup;
-import nl.marisabel.images.ModifyCreatedDate;
+import nl.marisabel.photos.ModifyCreatedDate;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributeView;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Objects;
 
 public class WhatsAppPhotosMetadataUpdater {

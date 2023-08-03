@@ -1,10 +1,10 @@
-package nl.marisabel.ui;
+package nl.marisabel.ui.customElements;
 
 import javax.swing.*;
 import java.awt.*;
 
 
- class CustomFlatButton extends JButton {
+ public class CustomFlatButton extends JButton {
   private Color bgColor;
   private Color textColor;
 

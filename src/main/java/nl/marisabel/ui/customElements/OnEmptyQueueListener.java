@@ -1,4 +1,4 @@
-package nl.marisabel.ui;
+package nl.marisabel.ui.customElements;
 
 public interface OnEmptyQueueListener
 {
