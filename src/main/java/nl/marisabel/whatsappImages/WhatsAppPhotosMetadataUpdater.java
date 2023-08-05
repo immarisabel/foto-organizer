@@ -1,5 +1,6 @@
 package nl.marisabel.whatsappImages;
 
+import nl.marisabel.exceptions.ModifyException;
 import nl.marisabel.photos.ModifyCreatedDate;
 
 import java.io.File;
@@ -20,7 +21,7 @@ public class WhatsAppPhotosMetadataUpdater {
 
 
 
-    public void scanFiles(String sourceFolderPath) throws ParseException, IOException {
+    public void scanFiles(String sourceFolderPath) throws ParseException, IOException, ModifyException {
         File folder = new File(sourceFolderPath);
         if (folder.exists() && folder.isDirectory()) {
             File[] files = folder.listFiles();
@@ -39,7 +40,7 @@ public class WhatsAppPhotosMetadataUpdater {
     }
 
 
-    private static void processFile(File file) throws ParseException, IOException {
+    private static void processFile(File file) throws ParseException, IOException, ModifyException {
         String metadata = metadataExtractor.getWhatsAppMetadata(file);
 
         // Check if the metadata is null or "null 00:00:00"

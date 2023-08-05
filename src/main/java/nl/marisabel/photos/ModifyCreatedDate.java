@@ -13,8 +13,10 @@ import java.util.logging.Logger;
 public class ModifyCreatedDate {
  private static final Logger log = Logger.getLogger(ModifyCreatedDate.class.getName());
 
- public void modify(File file, String dateTime) throws ParseException {
-
+ public void modify(File file, String dateTime) throws ParseException, IOException {
+  if (!file.exists()) {
+   throw new IOException("File does not exist.");
+  }
 
   try {
    Path filePath = file.toPath();
@@ -30,6 +32,7 @@ public class ModifyCreatedDate {
    log.info("Modified creation time of the file: " + file.getAbsolutePath());
   } catch (ParseException | IOException e) {
    log.warning("Error modifying created date: " + e.getMessage());
+   throw e;
   }
  }
 

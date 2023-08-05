@@ -1,6 +1,7 @@
 package nl.marisabel;
 
 
+import nl.marisabel.exceptions.ModifyException;
 import nl.marisabel.photos.ModifyCreatedDate;
 import org.apache.commons.imaging.ImageReadException;
 
@@ -22,7 +23,7 @@ public class TerminalApp {
  /**
   * nl.marisabel.TerminalApp for just running in the terminal instead of nl.marisabel.UI
   */
- public static void main(String[] args) throws ParseException, IOException, ImageReadException {
+ public static void main(String[] args) throws ParseException, IOException, ImageReadException, ModifyException {
 
 //  OrganizePhotos organizePhotos = new OrganizePhotos();
 //  organizePhotos.organizePhotos(SRC_FOLDER, DEST_FOLDER);

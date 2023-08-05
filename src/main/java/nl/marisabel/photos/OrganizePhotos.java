@@ -1,5 +1,6 @@
 package nl.marisabel.photos;
 
+import nl.marisabel.exceptions.ModifyException;
 import org.apache.commons.imaging.ImageReadException;
 
 import java.io.File;
@@ -54,6 +55,8 @@ public class OrganizePhotos {
                     } catch (ParseException e) {
                         System.out.println("[!] Error parsing file: " + file.getName() + " - " + e.getMessage());
                         counters[1]++; // Increment the skipped files counter
+                    } catch (ModifyException e) {
+                        throw new RuntimeException(e);
                     }
                 } else if (file.isDirectory()) {
                     // Process the subfolder recursively, organizing files directly in the destination folder

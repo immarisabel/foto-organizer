@@ -1,5 +1,6 @@
 package nl.marisabel.ui.panels.processPanels;
 
+import nl.marisabel.exceptions.ModifyException;
 import nl.marisabel.ui.utils.AllUtils;
 import nl.marisabel.ui.utils.BackupPictures;
 import nl.marisabel.ui.customElements.*;
@@ -115,7 +116,7 @@ public class UpdateWhatsAppMetadataPanel {
   return whatsAppProcessingPanel;
  }
 
- private boolean processWhatsAppPictures(String sourceFolder) throws ParseException, IOException {
+ private boolean processWhatsAppPictures(String sourceFolder) throws ParseException, IOException, ModifyException {
   WhatsAppPhotosMetadataUpdater photosProcessor = new WhatsAppPhotosMetadataUpdater();
   photosProcessor.scanFiles(sourceFolder);
   return true;

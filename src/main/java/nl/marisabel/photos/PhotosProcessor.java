@@ -1,5 +1,6 @@
 package nl.marisabel.photos;
 
+import nl.marisabel.exceptions.ModifyException;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
 import org.apache.commons.imaging.common.ImageMetadata;
@@ -34,7 +35,7 @@ public class PhotosProcessor {
      * @throws IOException
      * @throws ImageReadException
      */
-    public void processImage(File file, String destinationFolderPath) throws IOException, ImageReadException, ParseException {
+    public void processImage(File file, String destinationFolderPath) throws IOException, ImageReadException, ParseException, ModifyException {
         // Skip file if not image
         String fileName = file.getName().toLowerCase();
         if (!fileName.endsWith(".jpg") && !fileName.endsWith(".jpeg") && !fileName.endsWith(".png")) {
