@@ -28,10 +28,5 @@ Only valid for direct pictures on the WhatsApp Media / Pictures folder
 - give the path where you want them to be saved
 - click organize
 
-# Still to do:
-
-- [ ] for some reason some images are skipped but i cant find pattern as of why
-- [ ] warning to be added when field for folder is empty and you still press. currently says successful.
-- [ ] warnings to be all displayed INSIDE UI not a popup.
-- [ ] pressure test... we have a lot of files to organize
-- [ ] need to add option to interupt the process after backup is made
+## To interrupt
+Just close the app. When you resume, it should skip duplicates but will still create a backup first. This step is not optional in order to ensure no data is lost.
